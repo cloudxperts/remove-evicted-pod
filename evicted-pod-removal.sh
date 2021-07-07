@@ -21,7 +21,9 @@ if [ $EVICTED_POD_COUNT -ge 1 ]
 then
     echo "`date` - Number of pods to evict: $EVICTED_POD_COUNT" >> $EVICTED_LOG_DIR/podEviction_$EVICTED_POD_DELETION_DATE_TIME.log
     echo "`date` - Storing the evicted pod information in evicted_pod_${EVICTED_POD_DELETION_DATE_TIME}.csv file" >> $EVICTED_LOG_DIR/podEviction_$EVICTED_POD_DELETION_DATE_TIME.log
+
     kubectl get pods --all-namespaces | grep -wE 'Evicted|NAMESPACE' | tr -s " " "," > $EVICTED_REPORT_DIR/evicted_pod_${EVICTED_POD_DELETION_DATE_TIME}.csv
+
     echo "`date` - Removing all the evicted pod from cluster" >> $EVICTED_LOG_DIR/podEviction_$EVICTED_POD_DELETION_DATE_TIME.log
     for namespace in $(kubectl get namespace | grep -w 'Active' | grep -v kube-system | awk '{print $1}')
     do
@@ -48,6 +50,15 @@ echo "`date` - Completed the script." >> $EVICTED_LOG_DIR/podEviction_$EVICTED_P
 
 if [ -f $EVICTED_LOG_DIR/podEviction_$EVICTED_POD_DELETION_DATE_TIME.log ]
 then
-   cp $EVICTED_LOG_DIR/podEviction_$EVICTED_POD_DELETION_DATE_TIME.log $EVICTED_LOG_DIR/podEviction.log
-   cat $EVICTED_LOG_DIR/podEviction.log
+
+    cp $EVICTED_LOG_DIR/podEviction_$EVICTED_POD_DELETION_DATE_TIME.log $EVICTED_LOG_DIR/podEviction.log
+
+    if [ -f $EVICTED_REPORT_DIR/evicted_pod_${EVICTED_POD_DELETION_DATE_TIME}.csv ]
+    then
+	 echo "`date` - Removed pod details" >> $EVICTED_LOG_DIR/podEviction_$EVICTED_POD_DELETION_DATE_TIME.log
+	 cat $EVICTED_REPORT_DIR/evicted_pod_${EVICTED_POD_DELETION_DATE_TIME}.csv | tr "," "\t\t"  >> $EVICTED_LOG_DIR/podEviction.log
+    fi	 
+   
+    cat $EVICTED_LOG_DIR/podEviction.log
+
 fi
