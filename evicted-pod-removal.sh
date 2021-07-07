@@ -49,4 +49,5 @@ echo "`date` - Completed the script." >> $EVICTED_LOG_DIR/podEviction_$EVICTED_P
 if [ -f $EVICTED_LOG_DIR/podEviction_$EVICTED_POD_DELETION_DATE_TIME.log ]
 then
    cp $EVICTED_LOG_DIR/podEviction_$EVICTED_POD_DELETION_DATE_TIME.log $EVICTED_LOG_DIR/podEviction.log
+   cat $EVICTED_LOG_DIR/podEviction.log
 fi
