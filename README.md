@@ -11,6 +11,9 @@ docker container run -d --name evicted-pod-container -v /user/kube-config:/root/
 
 Note: valid kube config needs to be mounted as a volume.
 
+
+# scheduling cron job in kubernetes
+
 ```
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -27,7 +30,7 @@ spec:
         spec:
           containers:
           - name: evictedpodremoval-pod
-            image: fareportal.azurecr.io/evicted-pod-remove
+            image: cloudxperts/evicted-pod-remove
             volumeMounts:
             - name: kubesecret
               mountPath: "/root/.kube"
@@ -43,3 +46,5 @@ spec:
               - key: config
                 path: config
 ```
+
+Note: this defination is for kubernetes v1.17, for latest version of kubernetes apiVersion will be batch/v1 instead of batch/v1beta1
